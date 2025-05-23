@@ -2,10 +2,11 @@ import json
 import numpy as np
 import cvxpy as cp
 import pandas as pd
+import helpers
 
 # --- Step 1: Load Data ---
-with open("extracted/extracted-heilman-dining-hall-lunch-2025-2025-06-02.json", "r") as f:
-    menu = json.load(f)
+with open("extracted/extracted-heilman-dining-hall-lunch-2025-2025-06-01.json", "r") as f:
+    menu = helpers.flatten_sectioned_menu(json.load(f))
 
 # --- Step 2: Define Macro Targets ---
 target = {

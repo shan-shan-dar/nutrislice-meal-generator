@@ -2,10 +2,16 @@ import json
 import os
 
 def extract_day_menu(day_obj):
-    extracted_foods = []
-    seen_items = {}
+    sections = {}
+    current_section = "Uncategorized"
 
     for idx, item in enumerate(day_obj.get("menu_items", [])):
+        # Update section if this item is a section header
+        if item.get("is_section_title"):
+            current_section = item.get("text", "Unnamed Section").strip()
+            sections.setdefault(current_section, [])
+            continue
+
         food = item.get("food")
         if not food:
             continue
@@ -23,27 +29,17 @@ def extract_day_menu(day_obj):
             ]
         }
 
-        # Check for duplicate by name
-        if name in seen_items:
-            previous_entry = seen_items[name]
-            if extracted_entry == previous_entry:
-                print(f"Removed duplicate: {name}")
-                continue
-            else:
-                print(f"⚠️ Found same name but different data for: {name}")
-                print(f"Original: {json.dumps(previous_entry, indent=2)}")
-                print(f"New:      {json.dumps(extracted_entry, indent=2)}")
-                # Still add it — it's not an exact duplicate
-        else:
-            seen_items[name] = extracted_entry
+        # Add to current section
+        sections.setdefault(current_section, []).append(extracted_entry)
 
-        extracted_foods.append(extracted_entry)
+    # Assign globally unique IDs across all sections
+    global_id = 0
+    for section_items in sections.values():
+        for item in section_items:
+            item["id"] = global_id
+            global_id += 1
 
-        for i, item in enumerate(extracted_foods):
-            item["id"] = i
-
-    return extracted_foods
-
+    return sections
 
 
 def extract_all_days_from_raw_files(raw_dir="raw", output_dir="extracted"):
