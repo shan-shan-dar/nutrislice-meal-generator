@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import os
 import json
 
 # Function to fetch menu data for a specific dining hall
@@ -34,6 +35,9 @@ menu_data, year, month, day = fetch_menu(dining_location, meal_type, datetime(ye
 # Naming the file
 first_date = menu_data["days"][0]["date"]
 filename = f"{dining_location}-{meal_type}-{first_date}.json"
+
+# Ensure the 'raw/' directory exists
+os.makedirs("raw", exist_ok=True)
 
 if menu_data:
     print("Menu Data Fetched Successfully")
