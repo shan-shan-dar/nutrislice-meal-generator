@@ -3,15 +3,16 @@ import os
 
 def extract_day_menu(day_obj):
     extracted_foods = []
+    seen_items = {}
 
     for idx, item in enumerate(day_obj.get("menu_items", [])):
         food = item.get("food")
         if not food:
             continue
 
+        name = food.get("name", "")
         extracted_entry = {
-            "id": idx - 1,  # Unique ID based on order in JSON
-            "name": food.get("name", ""),
+            "name": name,
             "ingredients": food.get("ingredients", ""),
             "nutrition": food.get("rounded_nutrition_info", {}),
             "serving_size": food.get("serving_size_info", {}),
@@ -22,9 +23,27 @@ def extract_day_menu(day_obj):
             ]
         }
 
+        # Check for duplicate by name
+        if name in seen_items:
+            previous_entry = seen_items[name]
+            if extracted_entry == previous_entry:
+                print(f"Removed duplicate: {name}")
+                continue
+            else:
+                print(f"⚠️ Found same name but different data for: {name}")
+                print(f"Original: {json.dumps(previous_entry, indent=2)}")
+                print(f"New:      {json.dumps(extracted_entry, indent=2)}")
+                # Still add it — it's not an exact duplicate
+        else:
+            seen_items[name] = extracted_entry
+
         extracted_foods.append(extracted_entry)
 
+        for i, item in enumerate(extracted_foods):
+            item["id"] = i
+
     return extracted_foods
+
 
 
 def extract_all_days_from_raw_files(raw_dir="raw", output_dir="extracted"):
