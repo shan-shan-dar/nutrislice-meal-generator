@@ -1,5 +1,19 @@
 import json
 import os
+import re
+
+def clean_ingredients(text):
+    if not isinstance(text, str):
+        return ""
+    # Remove anything inside () or []
+    text = re.sub(r'\([^)]*\)', '', text)
+    text = re.sub(r'\[[^\]]*\]', '', text)
+    # Replace all punctuation with space
+    text = re.sub(r'[^\w\s]', ' ', text)
+    # Normalize all whitespace
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip().lower()
+
 
 def extract_day_menu(day_obj):
     sections = {}
@@ -19,7 +33,7 @@ def extract_day_menu(day_obj):
         name = food.get("name", "")
         extracted_entry = {
             "name": name,
-            "ingredients": food.get("ingredients", ""),
+            "ingredients": clean_ingredients(food.get("ingredients", "")),
             "nutrition": food.get("rounded_nutrition_info", {}),
             "serving_size": food.get("serving_size_info", {}),
             "icons": [
