@@ -1,5 +1,5 @@
 import json
-
+import os
 import solver
 import helpers
 
@@ -8,10 +8,10 @@ with open("extracted/extracted-heilman-dining-hall-lunch-2025-2025-06-02.json", 
 menu = helpers.flatten_sectioned_menu(raw_menu)
 
 target = {
-    "calories": 700,
-    "g_protein": 30,
-    "g_carbs": 70,
-    "g_fat": 20
+    "calories": 2100,
+    "g_protein": 180,
+    "g_carbs": 212,
+    "g_fat": 58
 }
 
 meal_json = solver.solve_meal_plan(menu, target)

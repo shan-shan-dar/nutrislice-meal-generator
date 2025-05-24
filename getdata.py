@@ -45,4 +45,3 @@ if menu_data:
         json.dump(menu_data, file, indent=2)
 else:
     print("Failed to Fetch Menu Data")
-

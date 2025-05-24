@@ -14,7 +14,7 @@ def solve_meal_plan(menu, target):
     ])
 
     # --- Define Serving Sizes ---
-    serving_sizes = [0.5, 1, 1.5, 2, 2.5, 3]
+    serving_sizes = np.arange(0.5,5,0.5)#[0.5, 1, 1.5, 2, 2.5, 3]
     n_sizes = len(serving_sizes)
 
     # --- Construct Items & Macro Matrix ---
@@ -63,7 +63,7 @@ def solve_meal_plan(menu, target):
         constraints.append(cp.sum(b[i]) <= 1)  
 
     # 2. There can be at most max_item items in the meal (for now. this will probably be a soft constraint eventually)
-    max_items = 6
+    max_items = 15
     constraints.append(cp.sum([b[i][k] for i in range(n_items) for k in range(n_sizes)]) <= max_items)  
 
     # --- Solve ---
