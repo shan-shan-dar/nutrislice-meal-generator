@@ -2,7 +2,10 @@
 raw/
 extracted/
 solved/
+flattened/
+
 donotcommit/
+
 
 .DS_Store
 

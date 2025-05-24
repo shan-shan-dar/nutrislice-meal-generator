@@ -30,17 +30,22 @@ def extract_day_menu(day_obj):
         if not food:
             continue
 
+        
         name = food.get("name", "")
+
+        icons = [
+            icon.get("synced_name")
+            for icon in food.get("icons", {}).get("food_icons", [])
+            if "synced_name" in icon
+        ]
+        
         extracted_entry = {
             "name": name,
             "ingredients": clean_ingredients(food.get("ingredients", "")),
             "nutrition": food.get("rounded_nutrition_info", {}),
             "serving_size": food.get("serving_size_info", {}),
-            "icons": [
-                icon.get("synced_name")
-                for icon in food.get("icons", {}).get("food_icons", [])
-                if "synced_name" in icon
-            ]
+            "icons": icons,
+            "icons_string": ", ".join(icons)
         }
 
         # Add to current section
@@ -66,8 +71,9 @@ def extract_all_days_from_raw_files(raw_dir="raw", output_dir="extracted"):
         try:
             # Split: e.g., heilman-dining-hall-lunch-2025-06-01.json
             name_parts = filename.replace(".json", "").split("-")
-            dining_place = "-".join(name_parts[:-3])  # handles hyphenated place names
-            meal_type = name_parts[-3]
+            dining_place = "-".join(name_parts[:-4])  # drop both year and day from filename parts
+            # handles hyphenated place names
+            meal_type = name_parts[-4]
 
             with open(os.path.join(raw_dir, filename), "r") as f:
                 menu_data = json.load(f)
