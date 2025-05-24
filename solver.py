@@ -1,10 +1,9 @@
-import json
 import numpy as np
 import cvxpy as cp
 import pandas as pd
-import helpers
 
 def solve_meal_plan(menu, target):
+
     # --- Define Target Vector ---
     g = np.array([
         target["calories"],
@@ -50,6 +49,7 @@ def solve_meal_plan(menu, target):
 
     # final solution vector
     x_vars = [cp.sum([b[i][k] * serving_sizes[k] for k in range(n_sizes)]) for i in range(n_items)]
+    # 
     total_macros = A @ cp.hstack(x_vars)
 
     # --- Solver Objective ---
@@ -84,7 +84,7 @@ def solve_meal_plan(menu, target):
     macro_labels = ["Calories", "Protein (g)", "Carbs (g)", "Fat (g)"]
 
     print("\n--- Solved Meal ---")
-    df = pd.DataFrame([{"name": i["name"], "servings": i["servings"]} for i in result])
+    df = pd.DataFrame([{"name": i["name"], "servings": i["servings"], "serving size":i["serving_size"]["serving_size_amount"] + " " + i["serving_size"]["serving_size_unit"]} for i in result])
     print(df)
 
     print("\n--- Macro Results ---")
